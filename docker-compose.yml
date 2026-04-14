@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+      - NEXT_PUBLIC_MULTIVERSX_NETWORK=mainnet
+    depends_on:
+      - backend
+    networks:
+      - celestial-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - MULTIVERSX_GATEWAY=https://gateway.multiversx.com
+      - MULTIVERSX_CHAIN_ID=1
+      - SMART_CONTRACT_ADDRESS=erd1qqqqqqqqqqqqqpgqcf7p8y9zvlmq9rjlz7k5l5d8z000000000000000000
+    networks:
+      - celestial-net
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - celestial-net
+
+networks:
+  celestial-net:
+    driver: bridge
